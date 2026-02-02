@@ -6,7 +6,7 @@
 #define chunk 100
 #define mostrar 10
 
-void imprimeArreglo(float* d, int n);
+void imprimeArreglo(float* d, int n, bool completo);
 
 int main()
 {
@@ -14,11 +14,18 @@ int main()
     std::cout << " Suma de Arreglos en Paralelo con OpenMP\n";
     std::cout << "=============================================\n";
 
-    int opcion, N;
-    float* a;
-    float* b;
-    float* c;
+    int N, opcion, verTodo;
 
+    // Solicitar tamaño
+    std::cout << "\nIngrese el tamano de los arreglos: ";
+    std::cin >> N;
+
+    // Reservar memoria
+    float* a = new float[N];
+    float* b = new float[N];
+    float* c = new float[N];
+
+    // Seleccionar método de llenado
     std::cout << "\nSeleccione como desea llenar los arreglos:\n";
     std::cout << "1. Ingresar valores manualmente\n";
     std::cout << "2. Generar valores aleatorios\n";
@@ -27,13 +34,6 @@ int main()
 
     if (opcion == 1)
     {
-        std::cout << "\nIngrese el tamano de los arreglos: ";
-        std::cin >> N;
-
-        a = new float[N];
-        b = new float[N];
-        c = new float[N];
-
         std::cout << "\nIngrese los valores del arreglo A separados por espacios:\n";
         for (int i = 0; i < N; i++)
             std::cin >> a[i];
@@ -44,12 +44,6 @@ int main()
     }
     else
     {
-        N = 1000;  // tamaño por defecto
-
-        a = new float[N];
-        b = new float[N];
-        c = new float[N];
-
         srand((unsigned)time(NULL));
         for (int i = 0; i < N; i++)
         {
@@ -63,17 +57,36 @@ int main()
     for (int i = 0; i < N; i++)
         c[i] = a[i] + b[i];
 
-    // Resultados
+    // Mostrar primeros valores
     std::cout << "\nPrimeros valores del arreglo A:\n";
-    imprimeArreglo(a, N);
+    imprimeArreglo(a, N, false);
 
     std::cout << "\nPrimeros valores del arreglo B:\n";
-    imprimeArreglo(b, N);
+    imprimeArreglo(b, N, false);
 
     std::cout << "\nPrimeros valores del arreglo C (A + B):\n";
-    imprimeArreglo(c, N);
+    imprimeArreglo(c, N, false);
 
-    // para liberar memoria
+    // Preguntar si desea ver arreglos completos
+    std::cout << "\n¿Desea ver los arreglos completos?\n";
+    std::cout << "1. Si\n";
+    std::cout << "2. No\n";
+    std::cout << "Opcion: ";
+    std::cin >> verTodo;
+
+    if (verTodo == 1)
+    {
+        std::cout << "\nArreglo A completo:\n";
+        imprimeArreglo(a, N, true);
+
+        std::cout << "\nArreglo B completo:\n";
+        imprimeArreglo(b, N, true);
+
+        std::cout << "\nArreglo C completo (A + B):\n";
+        imprimeArreglo(c, N, true);
+    }
+
+    // Liberar memoria
     delete[] a;
     delete[] b;
     delete[] c;
@@ -82,10 +95,13 @@ int main()
     return 0;
 }
 
-void imprimeArreglo(float* d, int n)
+// Función para imprimir arreglos
+void imprimeArreglo(float* d, int n, bool completo)
 {
-    int limite = (n < mostrar) ? n : mostrar;
+    int limite = completo ? n : (n < mostrar ? n : mostrar);
+
     for (int i = 0; i < limite; i++)
         std::cout << d[i] << "  ";
+
     std::cout << std::endl;
 }
